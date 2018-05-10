@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=YakYak
+Comment=Desktop chat client for Google Hangouts
+Exec=yakyak
+Icon=${SNAP}/meta/gui/yakyak.png
+Categories=Network;InstantMessaging;

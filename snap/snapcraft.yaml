@@ -1,0 +1,83 @@
+name: yakyak
+version: latest
+version-script: cat $SNAPCRAFT_STAGE/version
+summary: YakYak
+description: |
+ Desktop client for Google Hangouts
+
+grade: stable
+confinement: strict
+
+parts:
+  yakyak:
+    plugin: nil
+    override-build: |
+      snapcraftctl build
+      ARCHITECTURE=$(dpkg --print-architecture)
+      if [ "${ARCHITECTURE}" = "amd64" ]; then
+        FILTER="x64"
+      elif [ "${ARCHITECTURE}" = "i386" ]; then
+        FILTER="ia32"
+      else
+        echo "ERROR! YakYak only produces debs for amd64 and i386. Failing the build here."
+        exit 1
+      fi
+      # Get the latest releases json
+      echo "Get GitHub releases..."
+      wget --quiet https://api.github.com/repos/yakyak/yakyak/releases -O releases.json
+      # Get the version from the tag_name and the download URL.
+      VERSION=$(jq . releases.json | grep tag_name | cut -d'"' -f4 | sed s'/v//' | head -n 1)
+      TARBALL_URL=$(grep browser_download releases.json | grep "${VERSION}" | grep "${FILTER}.tar.gz" | cut -d'"' -f4)
+      TARBALL=$(basename "${TARBALL_URL}")
+      echo "Downloading ${TARBALL_URL}..."
+      wget --quiet "${TARBALL_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TARBALL}"
+      echo "Unpacking ${TARBALL}..."
+      tar xf "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" -C "${SNAPCRAFT_PART_INSTALL}/"
+      mv "${SNAPCRAFT_PART_INSTALL}/yakyak-linux-${FILTER}" "${SNAPCRAFT_PART_INSTALL}/yakyak"
+      rm -f releases.json 2>/dev/null
+      rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
+      echo $VERSION > $SNAPCRAFT_STAGE/version
+    after:
+      - desktop-gtk2
+    build-packages:
+      - jq
+      - sed
+      - tar
+      - wget
+    stage-packages:
+      - libasound2
+      - libgconf2-4
+      - libnotify4
+      - libnspr4
+      - libnss3
+      - libpcre3
+      - libpulse0
+      - libxss1
+      - libxtst6
+
+apps:
+  yakyak:
+    command: bin/desktop-launch $SNAP/yakyak/yakyak
+    # Correct the TMPDIR path for Chromium Framework/Electron to
+    # ensure libappindicator has readable resources.
+    # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
+    # are used and do not fall back to Notification Area applets
+    # or disappear completely.
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
+      XDG_CURRENT_DESKTOP: Unity
+    plugs:
+      - bluez
+      - browser-support
+      - camera
+      - gsettings
+      - home
+      - mount-observe
+      - network
+      - network-observe
+      - process-control
+      - pulseaudio
+      - screen-inhibit-control
+      - system-observe
+      - unity7
+      - x11
