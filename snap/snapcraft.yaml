@@ -13,6 +13,7 @@ parts:
     plugin: nil
     override-build: |
       snapcraftctl build
+      set -x
       ARCHITECTURE=$(dpkg --print-architecture)
       if [ "${ARCHITECTURE}" = "amd64" ]; then
         FILTER="x64"
