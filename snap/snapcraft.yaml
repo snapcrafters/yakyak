@@ -11,12 +11,11 @@ parts:
   yakyak:
     plugin: nil
     override-build: |
-      snapcraftctl build
       set -x
-      ARCHITECTURE=$(dpkg --print-architecture)
-      if [ "${ARCHITECTURE}" = "amd64" ]; then
+      snapcraftctl build
+      if [ "$SNAPCRAFT_ARCH_TRIPLET" = "x86_64-linux-gnu" ]; then
         FILTER="x64"
-      elif [ "${ARCHITECTURE}" = "i386" ]; then
+      elif [ "$SNAPCRAFT_ARCH_TRIPLET" = "i386-linux-gnu" ]; then
         FILTER="ia32"
       else
         echo "ERROR! YakYak only produces debs for amd64 and i386. Failing the build here."
