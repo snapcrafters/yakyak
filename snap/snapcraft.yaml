@@ -1,9 +1,8 @@
 name: yakyak
-version: latest
-version-script: cat $SNAPCRAFT_STAGE/version
 summary: YakYak
 description: |
  Desktop client for Google Hangouts
+adopt-info: yakyak
 
 grade: stable
 confinement: strict
@@ -12,11 +11,11 @@ parts:
   yakyak:
     plugin: nil
     override-build: |
+      set -x
       snapcraftctl build
-      ARCHITECTURE=$(dpkg --print-architecture)
-      if [ "${ARCHITECTURE}" = "amd64" ]; then
+      if [ "$SNAPCRAFT_ARCH_TRIPLET" = "x86_64-linux-gnu" ]; then
         FILTER="x64"
-      elif [ "${ARCHITECTURE}" = "i386" ]; then
+      elif [ "$SNAPCRAFT_ARCH_TRIPLET" = "i386-linux-gnu" ]; then
         FILTER="ia32"
       else
         echo "ERROR! YakYak only produces debs for amd64 and i386. Failing the build here."
@@ -38,7 +37,7 @@ parts:
       sed -i 's|script>/gm|script( nonce="(\.\*\?)"\)\?>/gm|' "${SNAPCRAFT_PART_INSTALL}/yakyak/resources/app/node_modules/hangupsjs/lib/init.js"
       rm -f releases.json 2>/dev/null
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
-      echo $VERSION > $SNAPCRAFT_STAGE/version
+      snapcraftctl set-version "$VERSION"
     after:
       - desktop-gtk2
     build-packages:
