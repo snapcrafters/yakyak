@@ -8,7 +8,6 @@ grade: stable
 confinement: strict
 
 architectures:
-  - build-on: i386
   - build-on: amd64
 
 parts:
@@ -29,9 +28,13 @@ parts:
       echo "Get GitHub releases..."
       wget --quiet https://api.github.com/repos/yakyak/yakyak/releases -O releases.json
       # Get the version from the tag_name and the download URL.
-      VERSION=$(jq . releases.json | grep tag_name | cut -d'"' -f4 | sed s'/v//' | head -n 1)
-      TARBALL_URL=$(grep browser_download releases.json | grep "${VERSION}" | grep "${FILTER}.tar.gz" | cut -d'"' -f4)
-      TARBALL=$(basename "${TARBALL_URL}")
+      # lets get 1.5.3
+      ##VERSION=$(jq . releases.json | grep tag_name | grep 1.5.3 | cut -d'"' -f4 | sed s'/v//' | head -n 1)
+      ##TARBALL_URL=$(grep browser_download releases.json | grep "${VERSION}" | grep "${FILTER}.tar.gz" | cut -d'"' -f4)
+      ##TARBALL=$(basename "${TARBALL_URL}")
+      VERSION=1.5.3
+      TARBALL_URL=https://github.com/yakyak/yakyak/releases/download/v1.5.3/yakyak-1.5.3-linux-x64.tar.gz
+      TARBALL=yakyak-1.5.3-linux-x64.tar.gz
       echo "Downloading ${TARBALL_URL}..."
       wget --quiet "${TARBALL_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TARBALL}"
       echo "Unpacking ${TARBALL}..."
@@ -43,7 +46,7 @@ parts:
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
       snapcraftctl set-version "$VERSION"
     after:
-      - desktop-gtk2
+      - desktop-gtk3
     build-packages:
       - jq
       - sed
