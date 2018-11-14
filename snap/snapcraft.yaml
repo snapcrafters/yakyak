@@ -46,7 +46,7 @@ parts:
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
       snapcraftctl set-version "$VERSION"
     after:
-      - desktop-gtk2
+      - desktop-gtk3
     build-packages:
       - jq
       - sed
