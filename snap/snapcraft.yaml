@@ -3,6 +3,7 @@ summary: YakYak
 description: |
  Desktop client for Google Hangouts
 adopt-info: yakyak
+base: core18
 
 grade: stable
 confinement: strict
