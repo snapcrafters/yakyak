@@ -66,6 +66,7 @@ parts:
       - libpulse0
       - libxss1
       - libxtst6
+      - libx11-xcb1
   desktop-gtk3:
     build-packages:
     - build-essential
