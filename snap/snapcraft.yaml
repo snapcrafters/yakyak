@@ -49,8 +49,6 @@ parts:
       rm -f releases.json 2>/dev/null
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
       snapcraftctl set-version "$VERSION"
-    after:
-      - desktop-gtk3
     build-packages:
       - jq
       - sed
@@ -67,38 +65,11 @@ parts:
       - libxss1
       - libxtst6
       - libx11-xcb1
-  desktop-gtk3:
-    build-packages:
-    - build-essential
-    - libgtk-3-dev
-    make-parameters:
-    - FLAVOR=gtk3
-    plugin: make
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: gtk
-    stage-packages:
-    - libxkbcommon0
-    - ttf-ubuntu-font-family
-    - dmz-cursor-theme
-    - light-themes
-    - adwaita-icon-theme
-    - gnome-themes-standard
-    - shared-mime-info
-    - libgtk-3-0
-    - libgdk-pixbuf2.0-0
-    - libglib2.0-bin
-    - libgtk-3-bin
-    - unity-gtk3-module
-    - libappindicator3-1
-    - locales-all
-    - xdg-user-dirs
-    - ibus-gtk3
-    - libibus-1.0-5
-    - fcitx-frontend-gtk3
     
 apps:
   yakyak:
-    command: bin/desktop-launch $SNAP/yakyak/yakyak
+    extensions: [gnome-3-28]
+    command: yakyak/yakyak
     # Correct the TMPDIR path for Chromium Framework/Electron to
     # ensure libappindicator has readable resources.
     # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
@@ -121,4 +92,3 @@ apps:
       - screen-inhibit-control
       - system-observe
       - unity7
-      - x11
