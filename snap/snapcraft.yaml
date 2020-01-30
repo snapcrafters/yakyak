@@ -2,7 +2,7 @@ name: yakyak
 summary: YakYak
 description: |
  Desktop client for Google Hangouts
-adopt-info: yakyak
+version: "1.5.4"
 base: core18
 
 grade: stable
@@ -33,12 +33,12 @@ parts:
       wget --quiet https://api.github.com/repos/yakyak/yakyak/releases -O releases.json
       # Get the version from the tag_name and the download URL.
       # lets get 1.5.3
-      ##VERSION=$(jq . releases.json | grep tag_name | grep 1.5.3 | cut -d'"' -f4 | sed s'/v//' | head -n 1)
+      ##VERSION=$(jq . releases.json | grep tag_name | grep $SNAPCRAFT_PROJECT_VERSION | cut -d'"' -f4 | sed s'/v//' | head -n 1)
       ##TARBALL_URL=$(grep browser_download releases.json | grep "${VERSION}" | grep "${FILTER}.tar.gz" | cut -d'"' -f4)
       ##TARBALL=$(basename "${TARBALL_URL}")
-      VERSION=1.5.3
-      TARBALL_URL=https://github.com/yakyak/yakyak/releases/download/v1.5.3/yakyak-1.5.3-linux-x64.tar.gz
-      TARBALL=yakyak-1.5.3-linux-x64.tar.gz
+      VERSION=$SNAPCRAFT_PROJECT_VERSION
+      TARBALL_URL=https://github.com/yakyak/yakyak/releases/download/v$SNAPCRAFT_PROJECT_VERSION/yakyak-$SNAPCRAFT_PROJECT_VERSION-linux-x64.tar.gz
+      TARBALL=yakyak-$SNAPCRAFT_PROJECT_VERSION-linux-x64.tar.gz
       echo "Downloading ${TARBALL_URL}..."
       wget --quiet "${TARBALL_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TARBALL}"
       echo "Unpacking ${TARBALL}..."
