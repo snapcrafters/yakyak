@@ -48,6 +48,7 @@ parts:
       # sed -i 's|script>/gm|script( nonce="(\.\*\?)"\)\?>/gm|' "${SNAPCRAFT_PART_INSTALL}/yakyak/resources/app/node_modules/hangupsjs/lib/init.js"
       rm -f releases.json 2>/dev/null
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
+      rm ${SNAPCRAFT_PART_INSTALL}/yakyak/chrome-sandbox
       snapcraftctl set-version "$VERSION"
     build-packages:
       - jq
@@ -69,7 +70,7 @@ parts:
 apps:
   yakyak:
     extensions: [gnome-3-28]
-    command: yakyak/yakyak
+    command: yakyak/yakyak --no-sandbox
     # Correct the TMPDIR path for Chromium Framework/Electron to
     # ensure libappindicator has readable resources.
     # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
