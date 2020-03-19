@@ -78,6 +78,7 @@ apps:
     # or disappear completely.
     environment:
       TMPDIR: $XDG_RUNTIME_DIR
+      DISABLE_WAYLAND: 1
       XDG_CURRENT_DESKTOP: Unity
     plugs:
       - bluez
