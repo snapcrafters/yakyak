@@ -2,7 +2,8 @@ name: yakyak
 summary: YakYak
 description: |
  Desktop client for Google Hangouts
-adopt-info: yakyak
+version: "1.5.4"
+base: core18
 
 grade: stable
 confinement: strict
@@ -11,6 +12,9 @@ architectures:
   - build-on: amd64
 
 parts:
+  bsi-trigger: # A non-built part, only used to trigger builds in build.snapcraft.io on upstream changes
+    plugin: nil
+    source: https://github.com/yakyak/yakyak.git
   yakyak:
     plugin: nil
     override-build: |
@@ -29,12 +33,12 @@ parts:
       wget --quiet https://api.github.com/repos/yakyak/yakyak/releases -O releases.json
       # Get the version from the tag_name and the download URL.
       # lets get 1.5.3
-      ##VERSION=$(jq . releases.json | grep tag_name | grep 1.5.3 | cut -d'"' -f4 | sed s'/v//' | head -n 1)
+      ##VERSION=$(jq . releases.json | grep tag_name | grep $SNAPCRAFT_PROJECT_VERSION | cut -d'"' -f4 | sed s'/v//' | head -n 1)
       ##TARBALL_URL=$(grep browser_download releases.json | grep "${VERSION}" | grep "${FILTER}.tar.gz" | cut -d'"' -f4)
       ##TARBALL=$(basename "${TARBALL_URL}")
-      VERSION=1.5.3
-      TARBALL_URL=https://github.com/yakyak/yakyak/releases/download/v1.5.3/yakyak-1.5.3-linux-x64.tar.gz
-      TARBALL=yakyak-1.5.3-linux-x64.tar.gz
+      VERSION=$SNAPCRAFT_PROJECT_VERSION
+      TARBALL_URL=https://github.com/yakyak/yakyak/releases/download/v$SNAPCRAFT_PROJECT_VERSION/yakyak-$SNAPCRAFT_PROJECT_VERSION-linux-x64.tar.gz
+      TARBALL=yakyak-$SNAPCRAFT_PROJECT_VERSION-linux-x64.tar.gz
       echo "Downloading ${TARBALL_URL}..."
       wget --quiet "${TARBALL_URL}" -O "${SNAPCRAFT_PART_INSTALL}/${TARBALL}"
       echo "Unpacking ${TARBALL}..."
@@ -44,9 +48,8 @@ parts:
       # sed -i 's|script>/gm|script( nonce="(\.\*\?)"\)\?>/gm|' "${SNAPCRAFT_PART_INSTALL}/yakyak/resources/app/node_modules/hangupsjs/lib/init.js"
       rm -f releases.json 2>/dev/null
       rm -f "${SNAPCRAFT_PART_INSTALL}/${TARBALL}" 2>/dev/null
+      rm ${SNAPCRAFT_PART_INSTALL}/yakyak/chrome-sandbox
       snapcraftctl set-version "$VERSION"
-    after:
-      - desktop-gtk3
     build-packages:
       - jq
       - sed
@@ -62,10 +65,17 @@ parts:
       - libpulse0
       - libxss1
       - libxtst6
-
+      - libx11-xcb1
+    
 apps:
   yakyak:
-    command: bin/desktop-launch $SNAP/yakyak/yakyak
+    extensions: [gnome-3-28]
+    command: yakyak/yakyak --no-sandbox
+    # Correct the TMPDIR path for Chromium Framework/Electron to
+    # ensure libappindicator has readable resources.
+    # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
+    # are used and do not fall back to Notification Area applets
+    # or disappear completely.
     environment:
       # Correct the TMPDIR path for Chromium Framework/Electron to
       # ensure libappindicator has readable resources.
@@ -90,4 +100,3 @@ apps:
       - screen-inhibit-control
       - system-observe
       - unity7
-      - x11
