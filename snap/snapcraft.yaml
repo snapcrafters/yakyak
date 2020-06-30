@@ -2,7 +2,7 @@ name: yakyak
 summary: YakYak
 description: |
  Desktop client for Google Hangouts
-version: "1.5.7"
+version: "1.5.8"
 base: core18
 
 grade: stable
