@@ -76,9 +76,11 @@ apps:
     # Coerce XDG_CURRENT_DESKTOP to Unity so that App Indicators
     # are used and do not fall back to Notification Area applets
     # or disappear completely.
+    # Fallback to XWayland if running in a Wayland session.
     environment:
       TMPDIR: $XDG_RUNTIME_DIR
       XDG_CURRENT_DESKTOP: Unity
+      DISABLE_WAYLAND: 1
     plugs:
       - bluez
       - browser-support
