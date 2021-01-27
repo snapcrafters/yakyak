@@ -3,7 +3,7 @@ summary: YakYak
 description: |
  Desktop client for Google Hangouts
 adopt-info: yakyak
-base: core18
+base: core20
 
 grade: stable
 confinement: strict
@@ -55,7 +55,7 @@ parts:
       - wget
     stage-packages:
       - libasound2
-      - libgconf2-4
+      - libgconf-2-4
       - libnotify4
       - libnspr4
       - libnss3
@@ -67,7 +67,7 @@ parts:
 
 apps:
   yakyak:
-    extensions: [gnome-3-28]
+    extensions: [gnome-3-38]
     command: yakyak/yakyak --no-sandbox
     # Correct the TMPDIR path for Chromium Framework/Electron to
     # ensure libappindicator has readable resources.
